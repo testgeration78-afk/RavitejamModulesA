@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Multi-keyword Highlighter</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            margin-top: 10%;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: rgb(227, 227, 227);
+        }
+        
+        .container {
+            background-color: white;
+            border: 2px groove gray;
+            border-radius: 10px;
+            padding: 20px;
+            width: 600px;
+        }
+        
+        .search,
+        .clear {
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+        
+        .search {
+            background-color: rgba(181, 84, 213, 0.9);
+        }
+        
+        .clear {
+            background-color: rgb(200, 50, 50);
+        }
+        
+        .prg {
+            border-radius: 20px;
+        }
+        
+        mark {
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: white;
+        }
+        
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Multi-keyword Highlighter</h2>
+
+        <p class="prg" id="text">
+            This is India Skills 2025-2026 South Regionals Competition. In this task, you are expected to highlight the text by matching with the user input. Add different colors to the different words. #BanegeBharathKeSkillChampion
+        </p>
+
+        <span>Enter one or more comma-separated keywords. Search is case-sensitive.</span><br><br>
+
+        <input type="text" id="input" placeholder="Enter the words">
+        <button class="search" onclick="highlightText()">Search</button>
+        <button class="clear" onclick="clearHighlight()">Clear</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const colors = ["red", "blue", "green", "orange", "purple", "brown"];
+
+        function highlightText() {
+            const input = document.getElementById("input").value;
+            const textElement = document.getElementById("text");
+            const result = document.getElementById("result");
+
+            if (!input.trim()) {
+                result.innerHTML = "Please enter keywords.";
+                return;
+            }
+
+            clearHighlight();
+
+            const keywords = input.split(",").map(word => word.trim());
+            let originalText = textElement.innerText;
+            let totalMatches = 0;
+            let details = "";
+
+            keywords.forEach((word, index) => {
+                if (!word) return;
+
+                const regex = new RegExp(word, "g");
+                const matches = originalText.match(regex);
+
+                if (matches) {
+                    totalMatches += matches.length;
+                    details += `${word}(${matches.length}) `;
+                    originalText = originalText.replace(regex,
+                        `<mark style="background-color:${colors[index % colors.length]}">${word}</mark>`
+                    );
+                }
+            });
+
+            textElement.innerHTML = originalText;
+            result.innerHTML = `${keywords.length} keyword(s) found, ${totalMatches} match(es) total. ${details}`;
+        }
+
+        function clearHighlight() {
+            const textElement = document.getElementById("text");
+            const result = document.getElementById("result");
+
+            textElement.innerHTML = textElement.innerText;
+            result.innerHTML = "";
+        }
+    </script>
+
+</body>
+
+</html>

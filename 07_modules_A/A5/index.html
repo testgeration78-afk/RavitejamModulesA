@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Merge</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px groove #333;
+            background: white;
+            text-align: center;
+            width: 300px;
+        }
+        
+        input {
+            margin: 10px 0;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+        
+        canvas {
+            margin-top: 15px;
+            max-width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Image Merge</h2>
+
+        <input type="file" id="img1" accept="image/*" required><br>
+        <input type="file" id="img2" accept="image/*" required><br>
+
+        <button onclick="mergeImages()">Merge</button>
+        <button onclick="downloadImage()">Download</button>
+        <button onclick="resetAll()">Reset</button>
+
+        <p>Upload both images and click Merge</p>
+
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+
+        function mergeImages() {
+            const file1 = document.getElementById("img1").files[0];
+            const file2 = document.getElementById("img2").files[0];
+
+            if (!file1 || !file2) {
+                alert("Please upload both images!");
+                return;
+            }
+
+            const img1 = new Image();
+            const img2 = new Image();
+
+            img1.src = URL.createObjectURL(file1);
+            img2.src = URL.createObjectURL(file2);
+
+            img1.onload = function() {
+                img2.onload = function() {
+                    canvas.width = img1.width + img2.width;
+                    canvas.height = Math.max(img1.height, img2.height)
+                    ctx.drawImage(img1, 0, 0);
+                    ctx.drawImage(img2, img1.width, 0);
+                }
+            }
+        }
+
+        function downloadImage() {
+            const link = document.createElement("a");
+            link.download = "merged-image.png";
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function resetAll() {
+            document.getElementById("img1").value = "";
+            document.getElementById("img2").value = "";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+
+</body>
+
+</html>
